@@ -4,8 +4,8 @@
 typedef struct {
   char staticElements[2][2];
   /* staticElements - a multidimensional array that will contain the non-moving
-  elements of a cell such as snake heads/tails and ladder bottom/tops. These
-  will be denoted by "H#", "T#", "B#", and "A#", respectively. The # will
+  elements of a cell such as snake heads/tails and ladder beginning/ends. These
+  will be denoted by "H#", "T#", "B#", and "E#", respectively. The # will
   be replaced by a unique number to differ each snakeHead from each other.
   There can only be a maximum of two static elements per cell. */
   char players[2][2];
@@ -25,9 +25,9 @@ int main() {
   // counters pour for loop
   char c, temp[2];
   // char siu
+  // open 'board.txt' and fill up the cell array 'board' with the information
   FILE *fp;
-  fp = fopen("rip.txt", "r");
-  // every two lines in the .txt file is a row
+  fp = fopen("board.txt", "r");
   for (j = 0; j < 8; j += 1) {
     for (i = 0; i < 8; i += 1) {
       c = fgetc(fp);
@@ -54,21 +54,23 @@ int main() {
       }
     }
   }
-  // printf("wtf");
-  printBoard(board);
   fclose(fp);
+
+  printBoard(board);
+
 }
 
 void printBoard(cell board[][8]) {
+  system("cls");
   int i, j;
   char temp[2];
   printf("   ");
-  for (i = 0; i < 8; i += 1) {
+  for (i = 1; i <= 8; i += 1) {
     printf("|c%d", i);
   }
   printf("|\n");
   for (j = 0; j < 8; j += 1) {
-    printf("|r%d", j);
+    printf("|r%d", j + 1);
     for (i = 0; i < 8; i += 1) {
       temp[0] = board[j][i].staticElements[0][0];
       temp[1] = board[j][i].staticElements[0][1];
@@ -80,6 +82,10 @@ void printBoard(cell board[][8]) {
       temp[1] = board[j][i].staticElements[1][1];
       printf("|%c%c",temp[0],temp[1]);
     }
-    printf("|\n");
+    printf("|\n\n");
   }
+  printf("Snake Heads: S#\n");
+  printf("Snake Tails: T#\n");
+  printf("Ladder Beginnings: B#\n");
+  printf("Ladder Ends: E#\n");
 }
