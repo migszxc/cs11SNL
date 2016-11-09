@@ -11,7 +11,7 @@ typedef struct {
   char players[2][2];
   /* players - a multidimensional array that will contain the players of a
   cell. These will be denoted by a symbol. There can be a maximum of 4 players
-  in a cell. (You can only have 4 players in the game.)*/
+  in a cell. (You have 4 players in the game.)*/
 }cell;
 
 void printBoard(cell board[][8]);
@@ -88,6 +88,17 @@ int main() {
 /* function that moves a player[px][py] in cell board[x][y]  'steps' amount
 forward */
 void advancePlayer(cell *board[][8], int x, int y, int px, int py, int steps) {
+  char plyr;
+  int LR;
+  // left or right, 0 or 1
+  plyr = board[y][x].player[py][px];
+  // if the player is on an even numbered row, it's moving towards the left
+  // odd numbered row towards the right
+  if (x % 2 == 0) {
+    LR = 0;
+  } else {
+    LR = 1;
+  }
 
 }
 
@@ -123,17 +134,21 @@ void printBoard(cell board[][8]) {
   printf("|\n");
   for (j = 0; j < 8; j += 1) {
     printf("|r%d", j + 1);
+    // top half of the row
     for (i = 0; i < 8; i += 1) {
       if (isPlayerPresent(board[j][i])) {
+        // if the cell contains players, print them out
         temp[0] = board[j][i].players[0][0];
         temp[1] = board[j][i].players[0][1];
       } else {
+        // otherwise, print the staticElements in the cell
         temp[0] = board[j][i].staticElements[0][0];
         temp[1] = board[j][i].staticElements[0][1];
       }
       printf("|%c%c",temp[0],temp[1]);
     }
     printf("|\n   ");
+    // bottom half of the row
     for (i = 0; i < 8; i += 1) {
       if (isPlayerPresent(board[j][i])) {
         temp[0] = board[j][i].players[1][0];
