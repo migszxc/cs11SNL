@@ -1,6 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* playah - a structure made for each player where we can store information such
+as their position in the board*/
+typedef struct {
+  int x;
+  // x - position in the x coordinate
+  int y;
+  // y - position in the y coordinate
+}playah;
+
+/* cell - a structure made for each "cell" in the board that stores information
+ such as players and staticElements present in that specifi cell*/
 typedef struct {
   char staticElements[2][2];
   /* staticElements - a multidimensional array that will contain the non-moving
@@ -16,13 +27,19 @@ typedef struct {
 
 void printBoard(cell board[][8]);
 int isPlayerPresent(cell box);
-void advancePlayer(cell *board[][8], int x, int y, int px, int py, int steps);
+void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps);
 
 int main() {
   // declarations and initializations:
+  playah p1, p2, p3, p4;
+  p1.x = 0; p1.y = 7;
+  p2.x = 0; p2.y = 7;
+  p3.x = 0; p3.y = 7;
+  p4.x = 0; p4.y = 7;
+  // setting each player's position to be on the bottom left of the board
   cell board[8][8];
   // board - an 8 x 8 multidimensional array of datatype: "cell".
-  int i, j, k, l;
+  int i, j, k, l, tapak;
   // counters pour for loop
   char c, temp[2], plyr;
   // char siu
@@ -84,35 +101,95 @@ int main() {
   board[7][0].players[0][1] = '#';
   board[7][0].players[1][1] = '!';
   printBoard(board);
+  for (;;) {
+    printf("Enter how many steps to move forward: ");
+    scanf("%d", &tapak);
+    advancePlayer(board, &(p1.x), &(p1.y), 0, 0, tapak);
+    printBoard(board);
+  }
 }
-/* function that moves a player[px][py] in cell board[x][y]  'steps' amount
+/* function that moves a player[px][py] in cell board[*x][*y]  'steps' amount
 forward */
-void advancePlayer(cell *board[][8], int x, int y, int px, int py, int steps) {
+void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps) {
   char plyr;
-  int LR;
-  // left or right, 0 or 1
-  plyr = board[y][x].player[py][px];
-  // if the player is on an even numbered row, it's moving towards the left
-  // odd numbered row towards the right
-  if (x % 2 == 0) {
+  int LR, curx, cury, i;
+  // LR - a variable to tell which direction the player should be moving
+
+  plyr = board[*y][*x].players[py][px];
+  // store the player character into the 'plyr' variable
+  if (*y % 2 == 0) {
     LR = 0;
   } else {
     LR = 1;
   }
+  // if the player is on an even numbered row, it's moving towards the left(0)
+  // odd numbered row towards the right(1)
+  curx = *x;
+  cury = *y;
+  // store current player position into 'curx' and 'cury'
 
+  while (steps > 0) {
+    // break loop if there are no more steps to be made
+    if (steps == 0) break;
+    // if the player is on an odd numbered row
+    if (LR == 1) {
+      // move the player towards the end of the row(right side)
+      for (i = curx; i < 7; i += 1) {
+        curx += 1;
+        steps -= 1;
+        // so long as there are steps to be made
+        if (steps == 0) break;
+      }
+    // otherwise if the player is on an even numbered row
+    } else if (LR == 0) {
+      // move the player to the other end of the row (left side)
+      for (i = curx; i > 0; i -= 1) {
+        curx -= 1;
+        steps -= 1;
+        // so long as there are steps to be made
+        if (steps == 0) break;
+      }
+    }
+    /* if the player is on the right end of the row and it still has more steps to
+    nake, move it up*/
+    if (LR == 1 && curx == 7 && steps > 0) {
+      cury -= 1;
+      steps -= 1;
+      LR = 0;
+      if (steps == 0) break;
+    /* if the player is on the left end of the row and it still has more steps to
+    nake, move it up*/
+    } else if (LR == 0 && curx == 0 && steps > 0) {
+      cury -= 1;
+      steps -= 1;
+      LR = 1;
+      if (steps == 0) break;
+    }
+    if (steps == 0) break;
+  }
+  // copy plyr char into the new position
+  board[cury][curx].players[py][px] = plyr;
+  // clear the old position
+  board[*y][*x].players[py][px] = ' '
+  // update player information in the main() function
+  *x = curx;
+  *y = cury;
 }
 
 /* function that returns a non-zero value if there is a player present in
 cell being checked. returns 0 if there are no players in the cell */
 // box - of datatype cell
 int isPlayerPresent(cell box) {
+  // assume there are no players present in the cell
   int presence = 0;
   if (box.players[0][0] != ' ' ||
   box.players[0][1] != ' ' ||
   box.players[1][0] != ' ' ||
   box.players[1][1] != ' ') {
+    // if the cell player data is not empty the there is a player present
     presence = 1;
   }
+  // return
   return presence;
 }
 
