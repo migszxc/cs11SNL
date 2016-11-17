@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 /* playah - a structure made for each player where we can store information such
 as their position in the board*/
@@ -30,6 +31,7 @@ int isPlayerPresent(cell box);
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps);
 
 int main() {
+  srand(time(NULL));
   // declarations and initializations:
   playah p1, p2, p3, p4;
   p1.x = 0; p1.y = 7;
@@ -39,9 +41,9 @@ int main() {
   // setting each player's position to be on the bottom left of the board
   cell board[8][8];
   // board - an 8 x 8 multidimensional array of datatype: "cell".
-  int i, j, k, l, tapak;
+  int i, j, k, l, r, tapak;
   // counters pour for loop
-  char c, temp[2], plyr;
+  char c, temp[2], plyr, pause;
   // char siu
   /* go through each cell in the board and initialize staticElements
    and players with ' ' */
@@ -101,11 +103,30 @@ int main() {
   board[7][0].players[0][1] = '#';
   board[7][0].players[1][1] = '!';
   printBoard(board);
+  
   for (;;) {
-    printf("Enter how many steps to move forward: ");
-    scanf("%d", &tapak);
-    advancePlayer(board, &(p1.x), &(p1.y), 0, 0, tapak);
+    //printf("Enter how many steps to move forward: ");
+    //scanf("%d", &tapak);
+    r = rand() % 7;
+    advancePlayer(board, &(p1.x), &(p1.y), 0, 0, r);
     printBoard(board);
+    printf("Player 1 moves %d spaces!", r);
+    pause = getchar();
+    r = rand() % 7;
+    advancePlayer(board, &(p2.x), &(p2.y), 1, 0, r);
+    printBoard(board);
+    printf("Player 2 moves %d spaces!", r);
+    pause = getchar();
+    r = rand() % 7;
+    advancePlayer(board, &(p3.x), &(p3.y), 0, 1, r);
+    printBoard(board);
+    printf("Player 3 moves %d spaces!", r);
+    pause = getchar();
+    r = rand() % 7;
+    advancePlayer(board, &(p4.x), &(p4.y), 1, 1, r);
+    printBoard(board);
+    printf("Player 4 moves %d spaces!", r);
+    pause = getchar();
   }
 }
 /* function that moves a player[px][py] in cell board[*x][*y]  'steps' amount
@@ -150,15 +171,15 @@ void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps) {
         if (steps == 0) break;
       }
     }
-    /* if the player is on the right end of the row and it still has more steps to
-    nake, move it up*/
+    /* if the player is on the right end of the row and it still has more steps
+    to nake, move it up*/
     if (LR == 1 && curx == 7 && steps > 0) {
       cury -= 1;
       steps -= 1;
       LR = 0;
       if (steps == 0) break;
-    /* if the player is on the left end of the row and it still has more steps to
-    nake, move it up*/
+    /* if the player is on the left end of the row and it still has more steps
+    to make, move it up*/
     } else if (LR == 0 && curx == 0 && steps > 0) {
       cury -= 1;
       steps -= 1;
@@ -170,7 +191,7 @@ void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps) {
   // copy plyr char into the new position
   board[cury][curx].players[py][px] = plyr;
   // clear the old position
-  board[*y][*x].players[py][px] = ' '
+  board[*y][*x].players[py][px] = ' ';
   // update player information in the main() function
   *x = curx;
   *y = cury;
