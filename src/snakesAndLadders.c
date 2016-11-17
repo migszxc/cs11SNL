@@ -103,7 +103,7 @@ int main() {
   board[7][0].players[0][1] = '#';
   board[7][0].players[1][1] = '!';
   printBoard(board);
-  
+  pause = getchar();
   for (;;) {
     //printf("Enter how many steps to move forward: ");
     //scanf("%d", &tapak);
@@ -132,6 +132,7 @@ int main() {
 /* function that moves a player[px][py] in cell board[*x][*y]  'steps' amount
 forward */
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps) {
+  if (steps == 0) return;
   char plyr;
   int LR, curx, cury, i;
   // LR - a variable to tell which direction the player should be moving
