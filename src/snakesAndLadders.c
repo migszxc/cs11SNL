@@ -26,7 +26,7 @@ typedef struct {
   in a cell. (You have 4 players in the game.)*/
 }cell;
 
-void printBoard(cell board[][8]);
+void printBoard(cell board[][8], char blah);
 int isPlayerPresent(cell box);
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps);
 
@@ -102,29 +102,29 @@ int main() {
   board[7][0].players[1][0] = '@';
   board[7][0].players[0][1] = '#';
   board[7][0].players[1][1] = '!';
-  printBoard(board);
+  printBoard(board, plyr);
   pause = getchar();
   for (;;) {
     //printf("Enter how many steps to move forward: ");
     //scanf("%d", &tapak);
     r = rand() % 7;
     advancePlayer(board, &(p1.x), &(p1.y), 0, 0, r);
-    printBoard(board);
+    printBoard(board, plyr);
     printf("Player 1 moves %d spaces!", r);
     pause = getchar();
     r = rand() % 7;
     advancePlayer(board, &(p2.x), &(p2.y), 1, 0, r);
-    printBoard(board);
+    printBoard(board, plyr);
     printf("Player 2 moves %d spaces!", r);
     pause = getchar();
     r = rand() % 7;
     advancePlayer(board, &(p3.x), &(p3.y), 0, 1, r);
-    printBoard(board);
+    printBoard(board, plyr);
     printf("Player 3 moves %d spaces!", r);
     pause = getchar();
     r = rand() % 7;
     advancePlayer(board, &(p4.x), &(p4.y), 1, 1, r);
-    printBoard(board);
+    printBoard(board, plyr);
     printf("Player 4 moves %d spaces!", r);
     pause = getchar();
   }
@@ -217,7 +217,7 @@ int isPlayerPresent(cell box) {
 
 /* function that prints out the current state of the game board */
 // board - a multidimensional array of datatype cell
-void printBoard(cell board[][8]) {
+void printBoard(cell board[][8], char blah) {
   // clear the screen
   system("cls");
   // declarations and initializations
@@ -260,8 +260,8 @@ void printBoard(cell board[][8]) {
     }
     printf("|\n");
   }
-  printf("Snake Heads: S#\n");
-  printf("Snake Tails: T#\n");
-  printf("Ladder Beginnings: B#\n");
-  printf("Ladder Ends: E#\n");
+  printf("Snake Heads: S#\t\tPlayer 1: %c\n", blah);
+  printf("Snake Tails: T#\t\tPlayer 2: @\n");
+  printf("Ladder Starts: B#\tPlayer 3: #\n");
+  printf("Ladder Ends: E#\t\tPlayer 4: !\n");
 }
