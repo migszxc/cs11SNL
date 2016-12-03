@@ -9,6 +9,10 @@ typedef struct {
   // x - position in the x coordinate
   int y;
   // y - position in the y coordinate
+  int px;
+  // px - x position in the character array: players, in structure: cell
+  int py;
+  // py - y position in the character array: players, in structure: cell
 }playah;
 
 /* cell - a structure made for each "cell" in the board that stores information
@@ -29,15 +33,20 @@ typedef struct {
 void printBoard(cell board[][8], char blah);
 int isPlayerPresent(cell box);
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps);
+void checkElements(cell board[][8], int *x, int *y, int px, int py);
 
 int main() {
   srand(time(NULL));
   // declarations and initializations:
   playah p1, p2, p3, p4;
   p1.x = 0; p1.y = 7;
+  p1.px = 0; p1.py = 0;
   p2.x = 0; p2.y = 7;
+  p2.px = 0; p2.py = 1;
   p3.x = 0; p3.y = 7;
+  p3.px = 1; p3.py = 0;
   p4.x = 0; p4.y = 7;
+  p4.px = 1; p4.py = 1;
   // setting each player's position to be on the bottom left of the board
   cell board[8][8];
   // board - an 8 x 8 multidimensional array of datatype: "cell".
@@ -108,26 +117,30 @@ int main() {
     //printf("Enter how many steps to move forward: ");
     //scanf("%d", &tapak);
     r = rand() % 7;
-    advancePlayer(board, &(p1.x), &(p1.y), 0, 0, r);
+    advancePlayer(board, &(p1.x), &(p1.y), &(p1.px), &(p1.py), r);
     printBoard(board, plyr);
     printf("Player 1 moves %d spaces!", r);
     pause = getchar();
     r = rand() % 7;
-    advancePlayer(board, &(p2.x), &(p2.y), 1, 0, r);
+    advancePlayer(board, &(p2.x), &(p2.y), &(p2.px), &(p2.py), r);
     printBoard(board, plyr);
     printf("Player 2 moves %d spaces!", r);
     pause = getchar();
     r = rand() % 7;
-    advancePlayer(board, &(p3.x), &(p3.y), 0, 1, r);
+    advancePlayer(board, &(p3.x), &(p3.y), &(p3.px), &(p3.py), r);
     printBoard(board, plyr);
     printf("Player 3 moves %d spaces!", r);
     pause = getchar();
     r = rand() % 7;
-    advancePlayer(board, &(p4.x), &(p4.y), 1, 1, r);
+    advancePlayer(board, &(p4.x), &(p4.y), &(p4.px), &(p4.py), r);
     printBoard(board, plyr);
     printf("Player 4 moves %d spaces!", r);
     pause = getchar();
   }
+}
+
+void checkElements(cell board[][8], playah *P) {
+
 }
 /* function that moves a player[px][py] in cell board[*x][*y]  'steps' amount
 forward */
@@ -215,6 +228,7 @@ int isPlayerPresent(cell box) {
   return presence;
 }
 
+
 /* function that prints out the current state of the game board */
 // board - a multidimensional array of datatype cell
 void printBoard(cell board[][8], char blah) {
@@ -262,6 +276,6 @@ void printBoard(cell board[][8], char blah) {
   }
   printf("Snake Heads: S#\t\tPlayer 1: %c\n", blah);
   printf("Snake Tails: T#\t\tPlayer 2: @\n");
-  printf("Ladder Starts: B#\tPlayer 3: #\n");
+  printf("Ladder Bottoms: B#\tPlayer 3: #\n");
   printf("Ladder Ends: E#\t\tPlayer 4: !\n");
 }
