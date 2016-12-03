@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <windows.h>
 
 /* playah - a structure made for each player where we can store information such
 as their position in the board*/
@@ -33,7 +34,7 @@ typedef struct {
 void printBoard(cell board[][8], char blah);
 int isPlayerPresent(cell box);
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps);
-void checkElements(cell board[][8], int *x, int *y, int px, int py);
+int checkPlayer(cell board[][8], playah *dude);
 
 int main() {
   srand(time(NULL));
@@ -50,10 +51,9 @@ int main() {
   // setting each player's position to be on the bottom left of the board
   cell board[8][8];
   // board - an 8 x 8 multidimensional array of datatype: "cell".
-  int i, j, k, l, r, tapak;
-  // counters pour for loop
+  int i, j, k, l, r, state;
+  // counters for for loops
   char c, temp[2], plyr, pause;
-  // char siu
   /* go through each cell in the board and initialize staticElements
    and players with ' ' */
   for (j = 0; j < 8; j += 1) {
@@ -106,42 +106,170 @@ int main() {
   printf("Enter any ASCII character besides  '!', '@', and '#' to be your player token: ");
   scanf("%c", &plyr);
   /*set the bottom left corner to be the starting point and then place all the
-  players to be there */
+  players  there */
   board[7][0].players[0][0] = plyr;
   board[7][0].players[1][0] = '@';
   board[7][0].players[0][1] = '#';
   board[7][0].players[1][1] = '!';
   printBoard(board, plyr);
+  printf("Press enter to continue...\n");
   pause = getchar();
+  pause = getchar();
+  // game loop starts here
   for (;;) {
-    //printf("Enter how many steps to move forward: ");
-    //scanf("%d", &tapak);
-    r = rand() % 7;
-    advancePlayer(board, &(p1.x), &(p1.y), &(p1.px), &(p1.py), r);
-    printBoard(board, plyr);
-    printf("Player 1 moves %d spaces!", r);
+    //p1
+    r = 1 + rand() % 6;
+    for (i = 0; i < r; i += 1) {
+      advancePlayer(board, &(p1.x), &(p1.y), (p1.px), (p1.py), 1);
+      printBoard(board, plyr);
+      printf("Player 1 moves %d spaces!\n", r);
+      Sleep(500);
+    }
+    state = checkPlayer(board, &p1);
+    switch(state) {
+      case 1:
+      printf("Player 1 landed on a snake!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      break;
+      case 2:
+      printf("Player 1 landed on a ladder!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      default:
+      break;
+    }
+    printf("Press enter to continue...\n");
+    //p2
     pause = getchar();
-    r = rand() % 7;
-    advancePlayer(board, &(p2.x), &(p2.y), &(p2.px), &(p2.py), r);
-    printBoard(board, plyr);
-    printf("Player 2 moves %d spaces!", r);
+    r = 1 + rand() % 6;
+    for (i = 0; i < r; i += 1) {
+      advancePlayer(board, &(p2.x), &(p2.y), (p2.px), (p2.py), 1);
+      printBoard(board, plyr);
+      printf("Player 2 moves %d spaces!\n", r);
+      Sleep(500);
+    }
+    state = checkPlayer(board, &p2);
+    switch(state) {
+      case 1:
+      printf("Player 2 landed on a snake!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      break;
+      case 2:
+      printf("Player 2 landed on a ladder!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      default:
+      break;
+    }
+    printf("Press enter to continue...\n");
     pause = getchar();
-    r = rand() % 7;
-    advancePlayer(board, &(p3.x), &(p3.y), &(p3.px), &(p3.py), r);
-    printBoard(board, plyr);
-    printf("Player 3 moves %d spaces!", r);
+    //p3
+    r = 1 + rand() % 6;
+    for (i = 0; i < r; i += 1) {
+      advancePlayer(board, &(p3.x), &(p3.y), (p3.px), (p3.py), 1);
+      printBoard(board, plyr);
+      printf("Player 3 moves %d spaces!\n", r);
+      Sleep(500);
+    }
+    state = checkPlayer(board, &p3);
+    switch(state) {
+      case 1:
+      printf("Player 3 landed on a snake!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      break;
+      case 2:
+      printf("Player 3 landed on a ladder!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      default:
+      break;
+    }
+    printf("Press enter to continue...\n");
     pause = getchar();
-    r = rand() % 7;
-    advancePlayer(board, &(p4.x), &(p4.y), &(p4.px), &(p4.py), r);
-    printBoard(board, plyr);
-    printf("Player 4 moves %d spaces!", r);
+    //p4
+    r = 1 + rand() % 6;
+    for (i = 0; i < r; i += 1) {
+      advancePlayer(board, &(p4.x), &(p4.y), (p4.px), (p4.py), 1);
+      printBoard(board, plyr);
+      printf("Player 4 moves %d spaces!\n", r);
+      Sleep(500);
+    }
+    state = checkPlayer(board, &p4);
+    switch(state) {
+      case 1:
+      printf("Player 4 landed on a snake!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      break;
+      case 2:
+      printf("Player 4 landed on a ladder!\n");
+      Sleep(1000);
+      printBoard(board, plyr);
+      default:
+      break;
+    }
+    printf("Press enter to continue...\n");
     pause = getchar();
   }
 }
 
-void checkElements(cell board[][8], playah *P) {
-
+/* function that checks the player's current position and if it is in the same
+cell as a ladder bottom or a snake head
+returns 1 if the player was on a snake
+returns 2 if the player was on a ladder*/
+// board - the game board
+// *dude - pointer to the player in question
+int checkPlayer(cell board[][8], playah *dude) {
+  int i, j, newx, newy, flagged;
+  char num;
+  flagged = 0;
+  // if the cell the player is in has a snake
+  if (board[dude->y][dude->x].staticElements[0][0] == 'S') {
+    flagged = 1;
+    // set num to the snake#
+    num = board[dude->y][dude->x].staticElements[0][1];
+    // search the board for its matching tail with the same#
+    for (i = 0; i < 8; i += 1) {
+      for (j = 0; j < 8; j += 1) {
+        if ((board[i][j].staticElements[1][0] == 'T' && board[i][j].staticElements[1][1] == num) ||
+        (board[i][j].staticElements[0][0] == 'T' && board[i][j].staticElements[0][1] == num)) {
+          // store the coordinates of the matching tail into newx/newy
+          newx=j;
+          newy=i;
+        }
+      }
+    }
+    // move the player to the new coordinates (of the tail)
+    board[newy][newx].players[dude->py][dude->px] = board[dude->y][dude->x].players[dude->py][dude->px];
+    board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
+    dude->x = newx;
+    dude->y = newy;
+  }
+  /* same thing as above but accounting for the different possible positions of
+   the snake within the same cell*/
+  if (board[dude->y][dude->x].staticElements[1][0] == 'S') {
+    flagged = 1;
+    num = board[dude->y][dude->x].staticElements[1][1];
+    for (i = 0; i < 8; i += 1) {
+      for (j = 0; j < 8; j += 1) {
+        if ((board[i][j].staticElements[1][0] == 'T' && board[i][j].staticElements[1][1] == num) ||
+        (board[i][j].staticElements[0][0] == 'T' && board[i][j].staticElements[0][1] == num)) {
+          newx=j;
+          newy=i;
+        }
+      }
+    }
+    board[newy][newx].players[dude->py][dude->px] = board[dude->y][dude->x].players[dude->py][dude->px];
+    board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
+    dude->x = newx;
+    dude->y = newy;
+  }
+  return flagged;
 }
+
 /* function that moves a player[px][py] in cell board[*x][*y]  'steps' amount
 forward */
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps) {
@@ -228,7 +356,6 @@ int isPlayerPresent(cell box) {
   return presence;
 }
 
-
 /* function that prints out the current state of the game board */
 // board - a multidimensional array of datatype cell
 void printBoard(cell board[][8], char blah) {
@@ -239,14 +366,13 @@ void printBoard(cell board[][8], char blah) {
   // i, j - counters for for loop
   char temp[2];
   // char siu
-  // print out column labelers
-  printf("   ");
-  for (i = 1; i <= 8; i += 1) {
-    printf("|c%d", i);
+  printf("   +--");
+  for (i = 0; i < 7; i += 1) {
+    printf("+--");
   }
-  printf("|\n");
+  printf("+\n");
   for (j = 0; j < 8; j += 1) {
-    printf("|r%d", j + 1);
+    printf("   ", j + 1);
     // top half of the row
     for (i = 0; i < 8; i += 1) {
       if (isPlayerPresent(board[j][i])) {
@@ -273,9 +399,16 @@ void printBoard(cell board[][8], char blah) {
       printf("|%c%c",temp[0],temp[1]);
     }
     printf("|\n");
+    printf("   +--");
+    for (i = 0; i < 7; i += 1) {
+      printf("+--");
+    }
+    printf("+\n");
   }
+  printf("\n");
   printf("Snake Heads: S#\t\tPlayer 1: %c\n", blah);
   printf("Snake Tails: T#\t\tPlayer 2: @\n");
   printf("Ladder Bottoms: B#\tPlayer 3: #\n");
   printf("Ladder Ends: E#\t\tPlayer 4: !\n");
+  printf("\n");
 }
