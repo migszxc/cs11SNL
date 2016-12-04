@@ -35,6 +35,7 @@ void printBoard(cell board[][8], char blah);
 int isPlayerPresent(cell box);
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps);
 int checkPlayer(cell board[][8], playah *dude);
+int checkWin(cell board[][8], playah *dude, int *winz);
 
 int main() {
   srand(time(NULL));
@@ -51,7 +52,8 @@ int main() {
   // setting each player's position to be on the bottom left of the board
   cell board[8][8];
   // board - an 8 x 8 multidimensional array of datatype: "cell".
-  int i, j, k, l, r, state;
+  int i, j, k, l, r, state, winners;
+  winners = 0;
   // counters for for loops
   char c, temp[2], plyr, pause;
   /* go through each cell in the board and initialize staticElements
@@ -79,7 +81,7 @@ int main() {
     // top half of each cell
     for (i = 0; i < 8; i += 1) {
       c = fgetc(fp);
-      if ( c == '|') {
+      if (c == '|') {
         temp[0] = fgetc(fp);
         temp[1] = fgetc(fp);
         board[j][i].staticElements[0][0] = temp[0];
@@ -91,7 +93,7 @@ int main() {
     // bottom half of each cell
     for (i = 0; i < 8; i += 1) {
       c = fgetc(fp);
-      if ( c == '|') {
+      if (c == '|') {
         temp[0] = fgetc(fp);
         temp[1] = fgetc(fp);
         board[j][i].staticElements[1][0] = temp[0];
@@ -216,6 +218,12 @@ int main() {
   }
 }
 
+int checkWin(cell board[][8], playah *dude, int *winz) {
+  if (dude->y == 0 && dude->x == 0) {
+
+  }
+}
+
 /* function that checks the player's current position and if it is in the same
 cell as a ladder bottom or a snake head
 returns 1 if the player was on a snake
@@ -257,6 +265,41 @@ int checkPlayer(cell board[][8], playah *dude) {
       for (j = 0; j < 8; j += 1) {
         if ((board[i][j].staticElements[1][0] == 'T' && board[i][j].staticElements[1][1] == num) ||
         (board[i][j].staticElements[0][0] == 'T' && board[i][j].staticElements[0][1] == num)) {
+          newx=j;
+          newy=i;
+        }
+      }
+    }
+    board[newy][newx].players[dude->py][dude->px] = board[dude->y][dude->x].players[dude->py][dude->px];
+    board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
+    dude->x = newx;
+    dude->y = newy;
+  }
+  /* same things as above but with ladders */
+  if (board[dude->y][dude->x].staticElements[1][0] == 'B') {
+    flagged = 2;
+    num = board[dude->y][dude->x].staticElements[1][1];
+    for (i = 0; i < 8; i += 1) {
+      for (j = 0; j < 8; j += 1) {
+        if ((board[i][j].staticElements[1][0] == 'E' && board[i][j].staticElements[1][1] == num) ||
+        (board[i][j].staticElements[0][0] == 'E' && board[i][j].staticElements[0][1] == num)) {
+          newx=j;
+          newy=i;
+        }
+      }
+    }
+    board[newy][newx].players[dude->py][dude->px] = board[dude->y][dude->x].players[dude->py][dude->px];
+    board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
+    dude->x = newx;
+    dude->y = newy;
+  }
+  if (board[dude->y][dude->x].staticElements[0][0] == 'B') {
+    flagged = 2;
+    num = board[dude->y][dude->x].staticElements[0][1];
+    for (i = 0; i < 8; i += 1) {
+      for (j = 0; j < 8; j += 1) {
+        if ((board[i][j].staticElements[1][0] == 'E' && board[i][j].staticElements[1][1] == num) ||
+        (board[i][j].staticElements[0][0] == 'E' && board[i][j].staticElements[0][1] == num)) {
           newx=j;
           newy=i;
         }
@@ -366,11 +409,11 @@ void printBoard(cell board[][8], char blah) {
   // i, j - counters for for loop
   char temp[2];
   // char siu
-  printf("   +--");
+  printf("   %c%c%c%c", 201, 205, 205, 205); // ╔═══
   for (i = 0; i < 7; i += 1) {
-    printf("+--");
+    printf("%c%c%c%c", 203, 205, 205, 205); // ╦═══
   }
-  printf("+\n");
+  printf("%c\n", 187); // ╗
   for (j = 0; j < 8; j += 1) {
     printf("   ", j + 1);
     // top half of the row
@@ -384,9 +427,9 @@ void printBoard(cell board[][8], char blah) {
         temp[0] = board[j][i].staticElements[0][0];
         temp[1] = board[j][i].staticElements[0][1];
       }
-      printf("|%c%c",temp[0],temp[1]);
+      printf("%c%c %c",186,temp[0],temp[1]); // ║S 1
     }
-    printf("|\n   ");
+    printf("%c\n   ",186); // ║
     // bottom half of the row
     for (i = 0; i < 8; i += 1) {
       if (isPlayerPresent(board[j][i])) {
@@ -396,14 +439,22 @@ void printBoard(cell board[][8], char blah) {
         temp[0] = board[j][i].staticElements[1][0];
         temp[1] = board[j][i].staticElements[1][1];
       }
-      printf("|%c%c",temp[0],temp[1]);
+      printf("%c%c %c",186,temp[0],temp[1]); // ║T 1
     }
-    printf("|\n");
-    printf("   +--");
-    for (i = 0; i < 7; i += 1) {
-      printf("+--");
+    printf("%c\n",186); // ║
+    if (j != 7) {
+      printf("   %c%c%c%c",204,205,205,205); // ╠═══
+      for (i = 0; i < 7; i += 1) {
+        printf("%c%c%c%c",206,205,205,205); // ╬═══
+      }
+      printf("%c\n",185); // ╣
+    } else {
+      printf("   %c%c%c%c",200,205,205,205); // ╚═══
+      for (i = 0; i < 7; i += 1) {
+        printf("%c%c%c%c",202,205,205,205); // ╩═══
+      }
+      printf("%c\n",188); // ╝
     }
-    printf("+\n");
   }
   printf("\n");
   printf("Snake Heads: S#\t\tPlayer 1: %c\n", blah);
