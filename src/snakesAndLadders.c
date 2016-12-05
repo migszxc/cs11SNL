@@ -166,7 +166,7 @@ void playerTurn(cell board[][8], playah *p1, char plyr, int *winners) {
   char pause;
   if (!checkWin(board, &*p1, &*winners)) {
     r = 1 + rand() % 6;
-    printBoard
+    printBoard(board, plyr);
     printf("Player %d rolls a %d!\n", p1->player, r);
     Sleep(1000);
     for (i = 0; i < r; i += 1) {
