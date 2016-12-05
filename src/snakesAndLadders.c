@@ -6,6 +6,8 @@
 /* playah - a structure made for each player where we can store information such
 as their position in the board*/
 typedef struct {
+  int player;
+  // player - player number
   int x;
   // x - position in the x coordinate
   int y;
@@ -14,6 +16,8 @@ typedef struct {
   // px - x position in the character array: players, in structure: cell
   int py;
   // py - y position in the character array: players, in structure: cell
+  int place;
+  // place - integer detailing the characters winning placement
 }playah;
 
 /* cell - a structure made for each "cell" in the board that stores information
@@ -36,6 +40,8 @@ int isPlayerPresent(cell box);
 void advancePlayer(cell board[][8], int *x, int *y, int px, int py, int steps);
 int checkPlayer(cell board[][8], playah *dude);
 int checkWin(cell board[][8], playah *dude, int *winz);
+void playerTurn(cell board[][8], playah *p1, char plyr, int *winners);
+void printPlacement(playah dude);
 
 int main() {
   srand(time(NULL));
@@ -43,12 +49,20 @@ int main() {
   playah p1, p2, p3, p4;
   p1.x = 0; p1.y = 7;
   p1.px = 0; p1.py = 0;
+  p1.place = 0;
+  p1.player = 1;
   p2.x = 0; p2.y = 7;
   p2.px = 0; p2.py = 1;
+  p2.place = 0;
+  p2.player = 2;
   p3.x = 0; p3.y = 7;
   p3.px = 1; p3.py = 0;
+  p3.place = 0;
+  p3.player = 3;
   p4.x = 0; p4.y = 7;
   p4.px = 1; p4.py = 1;
+  p4.place = 0;
+  p4.player = 4;
   // setting each player's position to be on the bottom left of the board
   cell board[8][8];
   // board - an 8 x 8 multidimensional array of datatype: "cell".
@@ -114,113 +128,96 @@ int main() {
   board[7][0].players[0][1] = '#';
   board[7][0].players[1][1] = '!';
   printBoard(board, plyr);
-  printf("Press enter to continue...\n");
+  printf("Press enter to start the game...\n");
   pause = getchar();
   pause = getchar();
-  // game loop starts here
-  for (;;) {
-    //p1
-    r = 1 + rand() % 6;
-    for (i = 0; i < r; i += 1) {
-      advancePlayer(board, &(p1.x), &(p1.y), (p1.px), (p1.py), 1);
-      printBoard(board, plyr);
-      printf("Player 1 moves %d spaces!\n", r);
-      Sleep(500);
-    }
-    state = checkPlayer(board, &p1);
-    switch(state) {
-      case 1:
-      printf("Player 1 landed on a snake!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      break;
-      case 2:
-      printf("Player 1 landed on a ladder!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      default:
-      break;
-    }
-    printf("Press enter to continue...\n");
-    //p2
-    pause = getchar();
-    r = 1 + rand() % 6;
-    for (i = 0; i < r; i += 1) {
-      advancePlayer(board, &(p2.x), &(p2.y), (p2.px), (p2.py), 1);
-      printBoard(board, plyr);
-      printf("Player 2 moves %d spaces!\n", r);
-      Sleep(500);
-    }
-    state = checkPlayer(board, &p2);
-    switch(state) {
-      case 1:
-      printf("Player 2 landed on a snake!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      break;
-      case 2:
-      printf("Player 2 landed on a ladder!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      default:
-      break;
-    }
+  // game starts here
+  while (winners < 3) {
+    playerTurn(board, &p1, plyr, &winners);
     printf("Press enter to continue...\n");
     pause = getchar();
-    //p3
-    r = 1 + rand() % 6;
-    for (i = 0; i < r; i += 1) {
-      advancePlayer(board, &(p3.x), &(p3.y), (p3.px), (p3.py), 1);
-      printBoard(board, plyr);
-      printf("Player 3 moves %d spaces!\n", r);
-      Sleep(500);
-    }
-    state = checkPlayer(board, &p3);
-    switch(state) {
-      case 1:
-      printf("Player 3 landed on a snake!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      break;
-      case 2:
-      printf("Player 3 landed on a ladder!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      default:
-      break;
-    }
+
+    playerTurn(board, &p2, plyr, &winners);
     printf("Press enter to continue...\n");
     pause = getchar();
-    //p4
-    r = 1 + rand() % 6;
-    for (i = 0; i < r; i += 1) {
-      advancePlayer(board, &(p4.x), &(p4.y), (p4.px), (p4.py), 1);
-      printBoard(board, plyr);
-      printf("Player 4 moves %d spaces!\n", r);
-      Sleep(500);
-    }
-    state = checkPlayer(board, &p4);
-    switch(state) {
-      case 1:
-      printf("Player 4 landed on a snake!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      break;
-      case 2:
-      printf("Player 4 landed on a ladder!\n");
-      Sleep(1000);
-      printBoard(board, plyr);
-      default:
-      break;
-    }
+
+    playerTurn(board, &p3, plyr, &winners);
+    printf("Press enter to continue...\n");
+    pause = getchar();
+
+    playerTurn(board, &p4, plyr, &winners);
     printf("Press enter to continue...\n");
     pause = getchar();
   }
+  printBoard(board, plyr);
+  printf("\n");
+  printPlacement(p1);
+  printPlacement(p2);
+  printPlacement(p3);
+  printPlacement(p4);
+  printf("Press enter to continue...\n");
+  pause = getchar();
+  // game ends here
 }
 
-int checkWin(cell board[][8], playah *dude, int *winz) {
-  if (dude->y == 0 && dude->x == 0) {
+/* function that plays a turn for the player only if it hasn't won yet */
+void playerTurn(cell board[][8], playah *p1, char plyr, int *winners) {
+  int i, r, state;
+  char pause;
+  if (!checkWin(board, &*p1, &*winners)) {
+    r = 1 + rand() % 6;
+    printBoard
+    printf("Player %d rolls a %d!\n", p1->player, r);
+    Sleep(1000);
+    for (i = 0; i < r; i += 1) {
+      if (!checkWin(board, &*p1, &*winners)) {
+        advancePlayer(board, &(p1->x), &(p1->y), (p1->px), (p1->py), 1);
+        printBoard(board, plyr);
+        printf("Player %d rolls a %d!\n", p1->player, r);
+        Sleep(100);
+      }
+    }
+    printBoard(board, plyr);
+    state = checkPlayer(board, &*p1);
+    switch(state) {
+      case 1:
+      printf("Player %d landed on a snake!\n", p1->player);
+      Sleep(1000);
+      printBoard(board, plyr);
+      printf("Player %d landed on a snake!\n", p1->player);
+      break;
+      case 2:
+      printf("Player %d landed on a ladder!\n", p1->player);
+      Sleep(1000);
+      printBoard(board, plyr);
+      printf("Player %d landed on a ladder!\n", p1->player);
+      default:
+      break;
+    }
+  }
+}
 
+/* function that outputs the player's winning placement */
+void printPlacement(playah dude) {
+  if (dude.place == 0) {
+    printf("Player %d placement: DNF\n", dude.player);
+  } else {
+    printf("Player %d placement: %d\n", dude.player, dude.place);
+  }
+}
+
+/* function that checks if the player's current position is on the top left
+of the board
+returns 1 if so
+0 otherwise */
+int checkWin(cell board[][8], playah *dude, int *winz) {
+  if (dude->place > 0) return 1;
+  if (dude->y == 0 && dude->x == 0) {
+    *winz += 1;
+    dude->place = *winz;
+    return 1;
+  } else {
+    return 0;
   }
 }
 
@@ -231,15 +228,33 @@ returns 2 if the player was on a ladder*/
 // board - the game board
 // *dude - pointer to the player in question
 int checkPlayer(cell board[][8], playah *dude) {
-  int i, j, newx, newy, flagged;
+  int i, j, newx, newy, flagged, state;
   char num;
   flagged = 0;
-  // if the cell the player is in has a snake
   if (board[dude->y][dude->x].staticElements[0][0] == 'S') {
     flagged = 1;
-    // set num to the snake#
     num = board[dude->y][dude->x].staticElements[0][1];
-    // search the board for its matching tail with the same#
+    state = 0;
+  }
+  if (board[dude->y][dude->x].staticElements[1][0] == 'S') {
+    flagged = 1;
+    num = board[dude->y][dude->x].staticElements[1][1];
+    state = 0;
+  }
+  if (board[dude->y][dude->x].staticElements[0][0] == 'B') {
+    flagged = 1;
+    num = board[dude->y][dude->x].staticElements[0][1];
+    state = 1;
+  }
+  if (board[dude->y][dude->x].staticElements[1][0] == 'B') {
+    flagged = 1;
+    num = board[dude->y][dude->x].staticElements[1][1];
+    state = 1;
+  }
+
+  switch(state) {
+  // if the cell the player is in has a snake
+  case 0:
     for (i = 0; i < 8; i += 1) {
       for (j = 0; j < 8; j += 1) {
         if ((board[i][j].staticElements[1][0] == 'T' && board[i][j].staticElements[1][1] == num) ||
@@ -255,30 +270,9 @@ int checkPlayer(cell board[][8], playah *dude) {
     board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
     dude->x = newx;
     dude->y = newy;
-  }
-  /* same thing as above but accounting for the different possible positions of
-   the snake within the same cell*/
-  if (board[dude->y][dude->x].staticElements[1][0] == 'S') {
-    flagged = 1;
-    num = board[dude->y][dude->x].staticElements[1][1];
-    for (i = 0; i < 8; i += 1) {
-      for (j = 0; j < 8; j += 1) {
-        if ((board[i][j].staticElements[1][0] == 'T' && board[i][j].staticElements[1][1] == num) ||
-        (board[i][j].staticElements[0][0] == 'T' && board[i][j].staticElements[0][1] == num)) {
-          newx=j;
-          newy=i;
-        }
-      }
-    }
-    board[newy][newx].players[dude->py][dude->px] = board[dude->y][dude->x].players[dude->py][dude->px];
-    board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
-    dude->x = newx;
-    dude->y = newy;
-  }
-  /* same things as above but with ladders */
-  if (board[dude->y][dude->x].staticElements[1][0] == 'B') {
-    flagged = 2;
-    num = board[dude->y][dude->x].staticElements[1][1];
+    break;
+    // if the cell the player is in has a ladder
+    case 1:
     for (i = 0; i < 8; i += 1) {
       for (j = 0; j < 8; j += 1) {
         if ((board[i][j].staticElements[1][0] == 'E' && board[i][j].staticElements[1][1] == num) ||
@@ -292,23 +286,9 @@ int checkPlayer(cell board[][8], playah *dude) {
     board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
     dude->x = newx;
     dude->y = newy;
-  }
-  if (board[dude->y][dude->x].staticElements[0][0] == 'B') {
-    flagged = 2;
-    num = board[dude->y][dude->x].staticElements[0][1];
-    for (i = 0; i < 8; i += 1) {
-      for (j = 0; j < 8; j += 1) {
-        if ((board[i][j].staticElements[1][0] == 'E' && board[i][j].staticElements[1][1] == num) ||
-        (board[i][j].staticElements[0][0] == 'E' && board[i][j].staticElements[0][1] == num)) {
-          newx=j;
-          newy=i;
-        }
-      }
-    }
-    board[newy][newx].players[dude->py][dude->px] = board[dude->y][dude->x].players[dude->py][dude->px];
-    board[dude->y][dude->x].players[dude->py][dude->px] = ' ';
-    dude->x = newx;
-    dude->y = newy;
+    break;
+    default:
+    break;
   }
   return flagged;
 }
