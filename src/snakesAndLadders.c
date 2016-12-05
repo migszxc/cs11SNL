@@ -242,12 +242,12 @@ int checkPlayer(cell board[][8], playah *dude) {
     state = 0;
   }
   if (board[dude->y][dude->x].staticElements[0][0] == 'B') {
-    flagged = 1;
+    flagged = 2;
     num = board[dude->y][dude->x].staticElements[0][1];
     state = 1;
   }
   if (board[dude->y][dude->x].staticElements[1][0] == 'B') {
-    flagged = 1;
+    flagged = 2;
     num = board[dude->y][dude->x].staticElements[1][1];
     state = 1;
   }
